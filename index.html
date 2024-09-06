@@ -2,6 +2,8 @@
 <html lang="de">
 <head>
     <script src="https://meet.jit.si/external_api.js"></script>
+    <script src="script.js"></script>
+    <link rel="stylesheet" href="styles.css">
     <title>Jitsi Meet Face Detection</title>
 </head>
 <body>
@@ -9,52 +11,20 @@
 <script>
     const domain = "meet.jit.si";
     const options = {
-        roomName: "40123124141413154236436523",
-        width: 1600,
-        height: 900,
+        roomName: "DeinRaumName",
+        width: 700,
+        height: 700,
         parentNode: document.querySelector('#meet'),
-        interfaceConfigOverwrite: { /* Interface Einstellungen */},
-        configOverwrite: { /* Weitere Konfigurationen */}
+        interfaceConfigOverwrite: {},
+        configOverwrite: {}
     };
     const api = new JitsiMeetExternalAPI(domain, options);
 
-    function addLightbulb(id) {
-        
-    }
-
-    api.addEventListener('participantJoined', () => {
-        console.log('Ein Teilnehmer ist der Konferenz beigetreten!');
-        // Rufe die Capture- und Detect-Methoden auf
-        fetch('http://127.0.0.1:5000/capture', {method: 'POST'})
-            .then(() => {
-                return fetch('http://127.0.0.1:5000/detect', {method: 'POST'});
-            })
-            .then(response => response.json())
-            .then(data => {
-                console.log('Erkennungsdaten:', data);
-                // Überprüfe den Wert von isRecognized
-                if (!data.isRecognized) {
-                    // Wenn die Kontrollperson nicht erkannt ist, zeige eine Warnung oder Button
-                    alert('Kontrollperson nicht erkannt oder nicht alleine im Bild!');
-                    // Hier kannst du einen Button anzeigen oder andere UI-Aktionen durchführen
-                    addLightbulb(participant.id)
-                }
-            })
-            .catch(error => console.error('Fehler bei der Anfrage:', error));
+    // Event listener für neue Teilnehmer
+    api.addEventListener('participantJoined', participant => {
+        console.log(`Teilnehmer beigetreten: ${participant.id}`);
+        setInterval(() => checkParticipantFace(participant.id), 10000);
     });
-
-    // Optional: Cronjob-ähnliche Funktion, um die Erkennung regelmäßig aufzurufen
-    setInterval(() => {
-        fetch('http://127.0.0.1:5000/detect', {method: 'POST'})
-            .then(response => response.json())
-            .then(data => {
-                console.log('Periodische Erkennung:', data);
-                if (!data.isRecognized) {
-                    alert('Kontrollperson nicht erkannt oder nicht alleine im Bild!');
-                }
-            })
-            .catch(error => console.error('Fehler bei der Anfrage:', error));
-    }, 10000);  // Alle 10 Sekunden
 </script>
 </body>
 </html>
