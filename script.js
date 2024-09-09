@@ -34,15 +34,17 @@ function captureParticipantFace() {
 function addStatusIcon(participantId) {
     // Finde das Teilnehmer-Element im DOM (abhängig von Jitsi DOM-Struktur)
     const participantElement = document.querySelector(`[id="participant_${participantId}"]`);
-
     if (participantElement) {
         // Erstelle das Bild-Element
-        const img = document.createElement('img');
-        img.src = './sample/lightbulb.jpg';  // Pfad zu deinem Symbolbild
-        img.className = 'status-icon';
-
-        // Füge das Symbolbild dem Teilnehmer-Element hinzu
-        participantElement.appendChild(img);
+        const indicatorsContainer = participantElement.querySelector('.css-lribt2-indicators');
+        if (indicatorsContainer) {
+            const img = document.createElement('img');
+            img.src = './sample/lightbulb.jpg';  // Pfad zu deinem Symbolbild
+            img.className = 'status-icon';
+            indicatorsContainer.appendChild(img);
+        } else {
+            console.log('Der Container für die Icons wurde nicht gefunden.');
+        }
     } else {
         console.log(`Teilnehmer-Element für ${participantId} nicht gefunden.`);
     }
