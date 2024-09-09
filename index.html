@@ -11,7 +11,7 @@
 <script>
     const domain = "meet.jit.si";
     const options = {
-        roomName: "DeinRaumName",
+        roomName: "Fachpraktikum Demo",
         width: 700,
         height: 700,
         parentNode: document.querySelector('#meet'),
@@ -19,10 +19,15 @@
         configOverwrite: {}
     };
     const api = new JitsiMeetExternalAPI(domain, options);
-
-    // Event listener für neue Teilnehmer
+    const imagePath = 'http://127.0.0.1:5000/photos/img.png';
     api.addEventListener('participantJoined', participant => {
         console.log(`Teilnehmer beigetreten: ${participant.id}`);
+        initializeCapture()
+        setInterval(() => checkParticipantFace(participant.id), 10000);
+    });
+    api.addEventListener('videoConferenceJoined', participant => {
+        console.log(`Teilnehmer beigetreten: ${participant.id}`);
+        initializeCapture()
         setInterval(() => checkParticipantFace(participant.id), 10000);
     });
 </script>
