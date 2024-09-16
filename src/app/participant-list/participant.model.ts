@@ -2,7 +2,8 @@
 export interface Participant {
   id: string;
   name: string;
-  videoStream: MediaStream;
+  videoStream: MediaStreamTrack[];
+  audioStream: MediaStreamTrack[];
   muted: boolean;
   videoEnabled: boolean;
   audioEnabled: boolean;

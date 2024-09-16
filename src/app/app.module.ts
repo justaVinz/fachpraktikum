@@ -15,6 +15,7 @@ import {NameInputComponent} from "./name-input/name-input.component";
 import {AppRoutingModule} from "./app-routing.module";
 import { ParticipantListComponent } from './participant-list/participant-list.component';
 import {MatCard, MatCardActions, MatCardContent, MatCardHeader, MatCardTitle} from "@angular/material/card";
+import { HttpClientModule } from '@angular/common/http'; // Importiere HttpClientModule
 
 
 const routes: Routes = [
@@ -30,6 +31,7 @@ const routes: Routes = [
     NameInputComponent
   ],
   imports: [
+    HttpClientModule,
     BrowserModule,
     ParticipantListComponent,
     AppRoutingModule,
