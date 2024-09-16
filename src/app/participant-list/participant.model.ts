@@ -8,4 +8,5 @@ export interface Participant {
   videoEnabled: boolean;
   audioEnabled: boolean;
   recognized: boolean | null;
+  lastChecked: number | null; // Zeitstempel als Date-Objekt
 }
