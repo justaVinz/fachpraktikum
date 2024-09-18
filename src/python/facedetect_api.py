@@ -14,7 +14,17 @@ current_dir = os.path.dirname(os.path.abspath(__file__))
 parent_dir = os.path.dirname(current_dir)
 photos_dir = os.path.join(parent_dir, 'app/lib/photos')
 
-# TODO Id übergeben in capture methode
+"""
+    Captures an image from the webcam and saves it as a PNG file.
+
+    Parameters:
+    user_id (str): The unique identifier for the user. This is used to name the saved image file.
+
+    Returns:
+    dict: A JSON response with a message indicating the outcome of the capture process.
+          If an error occurs, the response will contain an 'error' key with a description of the error.
+          If the capture is successful, the response will contain an 'img_path' key with the path to the saved image file.
+    """
 @app.route('/capture/<user_id>', methods=['POST'])
 def capture(user_id):
     img_name = f"{user_id}.png"
@@ -51,6 +61,17 @@ def capture(user_id):
         return jsonify({"message": "Bild bereits vorhanden."})
 
 
+"""
+    Detects a face in a live video stream from the webcam and compares it with a control image.
+
+    Parameters:
+    user_id (str): The unique identifier for the user. This is used to name the control image file.
+
+    Returns:
+    dict: A JSON response with a message indicating the outcome of the detection process.
+          If an error occurs, the response will contain an 'error' key with a description of the error.
+          If the detection is successful, the response will contain a 'recognized' key indicating whether the face was recognized.
+    """
 @app.route('/detect/<user_id>', methods=['POST'])
 def detect(user_id):
     img_name = f"{user_id}.png"
@@ -91,6 +112,17 @@ def detect(user_id):
         print("Gesichter sind nicht identisch")
         return jsonify({"message": "Gesichter sind nicht indentisch.", "recognized": False}), 200
 
+"""
+    Checks if an image file exists for a given user.
+
+    Parameters:
+    user_id (str): The unique identifier for the user. This is used to name the image file.
+
+    Returns:
+    dict: A JSON response with a message indicating the existence of the image file.
+          If the image file exists, the response will contain an 'exists' key with a value of True.
+          If the image file does not exist, the response will contain an 'exists' key with a value of False.
+"""
 @app.route('/check/<user_id>', methods=['GET'])
 def check_image(user_id):
     img_name = f"{user_id}.png"

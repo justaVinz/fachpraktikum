@@ -2,11 +2,12 @@
 export interface Participant {
   id: string;
   name: string;
-  videoStream: MediaStreamTrack[];
-  audioStream: MediaStreamTrack[];
+  stream: MediaStream,
+  videoElement: HTMLVideoElement;
   muted: boolean;
   videoEnabled: boolean;
   audioEnabled: boolean;
   recognized: boolean | null;
-  lastChecked: number | null; // Zeitstempel als Date-Objekt
+  lastChecked: number | null;
+  isFirstUser: boolean
 }

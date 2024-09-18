@@ -21,47 +21,95 @@ app.use(cors({
 
 app.use(express.static('public'));
 
-const participants = {}; // Teilnehmerliste
+const participants = {};
 
+function addUser(socket, data, isFirstUser) {
+  participants[socket.id] = {
+    id: data.id,
+    name: data.name,
+    stream: data.stream || null,
+    videoElement: data.videoElement || null,
+    videoEnabled: data.videoEnabled || false,
+    audioEnabled: data.audioEnabled || false,
+    recognized: data.recognized || null,
+    muted: data.muted || true,
+    lastChecked: data.lastChecked || null,
+    isFirstUser: isFirstUser,
+  };
+  console.log(`user ${data.name} (${socket.id}) added successfully.`);
+}
+
+// Handle new participant joining
 io.on('connection', (socket) => {
-  console.log('Ein neuer Benutzer hat sich verbunden:', socket.id);
+  console.log('new client connected:', socket.id);
 
-  // Füge den neuen Teilnehmer zur Liste hinzu
-  participants[socket.id] = { id: socket.id, name: 'User ' + socket.id }; // Beispielname, kannst du anpassen
+  // When a new participant joins
+  socket.on('new-participant', (data) => {
+    const isFirstUser = Object.keys(participants).length === 0;
 
-  // Informiere den neuen Teilnehmer über alle anderen Teilnehmer
-  socket.emit('current-participants', Object.values(participants));
+    // Add the new participant to the server's participants list
+    addUser(socket, data, isFirstUser);
 
-  // Informiere alle anderen Benutzer über den neuen Teilnehmer
-  socket.broadcast.emit('new-participant', participants[socket.id]);
+    console.log(`client: participant ${data.name} (${socket.id}) has joined.`);
 
-  // Wenn der Client die Verbindung trennt
+    // Send the existing participants list to the newly connected client
+    socket.emit('existing-participants', Object.values(participants));
+    console.log(`sent existing participants to ${data.name} (${socket.id})`);
+
+    // Broadcast the new participant to all other clients
+    socket.broadcast.emit('participant-joined', participants[socket.id]);
+    console.log(`broadcasted new participant ${data.name} (${socket.id}) to others.`);
+  });
+
+  // When a participant disconnects
   socket.on('disconnect', () => {
-    console.log('Benutzer hat die Verbindung getrennt:', socket.id);
+    console.log('client: user with socket id ' + socket.id + 'disconnected');
 
-    // Entferne den Teilnehmer aus der Liste
+    // Remove the participant from the server's participants list
+    const deletedParticipant =  participants[socket.id];
     delete participants[socket.id];
 
-    // Informiere alle anderen Benutzer über die Trennung
-    io.emit('participant-left', { id: socket.id });
+    // Inform all clients that this participant left
+    socket.broadcast.emit('participant-left', deletedParticipant);
   });
 
-  // Empfangene Nachricht für einen neuen Teilnehmer
-  socket.on('new-participant', (data) => {
-    console.log('Neuer Teilnehmer:', data);
-    // Broadcast an alle anderen Clients, dass ein neuer Teilnehmer da ist
-    socket.broadcast.emit('new-peer', data);
-  });
-
-  // Empfangene Nachricht für einen Stream
+  // When a participant sends a video stream
   socket.on('stream', (data) => {
-    console.log('Neuer Stream von Teilnehmer:', data.userId);
-    // Broadcast an alle anderen Clients, dass ein neuer Stream da ist
-    socket.broadcast.emit('stream', data);
+    console.log('client: sent stream data to broadcast:', data);
+
+    if (data && data.userId && data.stream) {
+      // Update the participant's video stream on the server
+      if (participants[data.userId]) {
+        participants[data.userId].stream = data.stream;
+        // Broadcast the stream to other participants
+        socket.broadcast.emit('stream', data);
+        console.log(`New stream from participant: ${data.userId}`);
+      } else {
+        console.log('Participant not found:', data.userId);
+      }
+    } else {
+      console.log('Invalid stream data:', data);
+    }
+  });
+
+  socket.on('get-participants', () => {
+    console.log('Client requested participants');
+    socket.emit('existing-participants', Object.values(participants));
+    console.log('Sent participants:', Object.values(participants));
+  });
+
+  // Handle requests for participants' video streams
+  socket.on('request-streams', () => {
+    console.log('client: requesting all streams');
+    for (const [id, participant] of Object.entries(participants)) {
+      if (participant.videoStream) {
+        socket.emit('stream', { userId: id, stream: participant.videoStream });
+      }
+    }
   });
 });
 
 const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => {
-  console.log(`Server läuft auf http://localhost:${PORT}`);
+  console.log(`Server running on http://localhost:${PORT}`);
 });

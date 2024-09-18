@@ -10,7 +10,6 @@ interface Participant {
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css']
 })
 export class AppComponent {
   participants: Participant[] = []; // Definiere das Array mit dem Typ
