@@ -1,31 +1,93 @@
+.app-container {
+  display: flex;
+  height: 100vh;
+  flex-direction: row;
+}
+
 .meeting-container {
   display: flex;
   flex-direction: column;
-  height: 100vh;
+  flex: 1;
+  position: relative;
 }
 
-.mat-toolbar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.video-container {
+.main-display {
   flex: 1;
   display: flex;
   justify-content: center;
   align-items: center;
-  overflow: auto;
+  position: relative;
 }
 
 .video-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  display: flex;
+  flex-wrap: wrap;
   gap: 10px;
 }
 
-video {
-  width: 100%;
-  border: 2px solid #ddd;
-  border-radius: 8px
+.controls-container {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  padding: 10px;
+  border: 2px solid blue; /* Blauer Rand um die Steuerungskontainer */
+  background-color: #fff; /* Weißer Hintergrund für bessere Sichtbarkeit des Rands */
+  position: absolute;
+  bottom: 0; /* Positioniert den Steuerungsbereich am unteren Rand der Meeting-Container */
+  width: 100%; /* Macht den Steuerungsbereich so breit wie die Meeting-Container */
+  z-index: 10; /* Stellt sicher, dass die Steuerungsknöpfe über anderen Elementen liegen */
+}
+
+.controls-container button {
+  background-color: transparent;
+  border: none;
+  padding: 5px;
+  cursor: pointer;
+}
+
+.controls-container img {
+  width: 24px;
+  height: 24px;
+}
+
+.participants-list {
+  width: 250px;
+  background-color: #f1f1f1;
+  border-left: 2px solid blue;
+  padding: 10px;
+  position: absolute;
+  right: 0;
+  top: 64px; /* Stelle sicher, dass es über dem Hauptinhalt liegt */
+  bottom: 0;
+  overflow-y: auto;
+  z-index: 5; /* Stellt sicher, dass die Teilnehmerliste hinter der Steuerungskontainer liegt */
+  box-shadow: -2px 0 5px rgba(0, 0, 0, 0.2); /* Schatten für die Teilnehmerliste */
+}
+
+.participant-wrapper {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  border-bottom: 1px solid #ccc; /* Linie zwischen Teilnehmern */
+}
+
+.participant-name {
+  font-weight: bold;
+  font-size: 16px;
+}
+
+.participant-status {
+  color: #888;
+  font-size: 14px;
+}
+
+.status-icons {
+  display: flex;
+}
+
+.status-icon {
+  width: 24px;
+  height: 24px;
+  margin-left: 5px;
 }

@@ -13,6 +13,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { ToastrModule } from 'ngx-toastr';
 import {MeetingComponent} from "./meeting/meeting.component";
 import {NameInputComponent} from "./name-input/name-input.component";
+import { FaceRecognitionService } from './services/face.recognition.service';
 import {AppRoutingModule} from "./app-routing.module";
 import { ParticipantListComponent } from './participant-list/participant-list.component';
 import {MatCard, MatCardActions, MatCardContent, MatCardHeader, MatCardTitle} from "@angular/material/card";
@@ -54,7 +55,9 @@ const routes: Routes = [
     MatCardTitle,
     MatCardHeader,
   ],
-  providers: [],
+  providers: [
+    FaceRecognitionService,
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

@@ -1,15 +1,28 @@
 import { Component, Input } from '@angular/core';
-import { Participant } from '../participant-list/participant.model'; // Pfad zum Participant-Modell anpassen
+import { Participant } from './participant.model';
+import {MatCard, MatCardContent, MatCardHeader, MatCardTitle} from '@angular/material/card';
+import {MatList, MatListItem} from '@angular/material/list';
+import {NgForOf, NgIf} from "@angular/common";
 
 @Component({
   selector: 'app-participant-list',
   templateUrl: './participant-list.component.html',
+  standalone: true,
+  imports: [
+    MatListItem,
+    MatList,
+    MatCardContent,
+    MatCardTitle,
+    MatCardHeader,
+    MatCard,
+    NgForOf,
+    NgIf
+  ],
   styleUrls: ['./participant-list.component.css']
 })
 export class ParticipantListComponent {
   @Input() participants: Participant[] = []; // Liste der Teilnehmer
 
-  // Diese Methode wird aufgerufen, um den Status des Teilnehmers (gemutet oder nicht) zu erkennen
   getParticipantStatus(participant: Participant): string {
     return participant.muted ? 'Muted' : 'Unmuted';
   }

@@ -23,76 +23,76 @@ app.use(express.static('public'));
 
 const participants = {};
 
-function addUser(socket, data, isFirstUser) {
-  participants[socket.id] = {
+function addUser(socket, data) {
+  if (!data || !data.id || !data.name) {
+    console.error('Invalid data received:', data);
+    return;
+  }
+
+  participants[data.id] = {
     id: data.id,
     name: data.name,
     stream: data.stream || null,
-    videoElement: data.videoElement || null,
     videoEnabled: data.videoEnabled || false,
     audioEnabled: data.audioEnabled || false,
-    recognized: data.recognized || null,
-    muted: data.muted || true,
-    lastChecked: data.lastChecked || null,
-    isFirstUser: isFirstUser,
+    recognized: data.recognized || false,
+    muted: data.muted || true
   };
-  console.log(`user ${data.name} (${socket.id}) added successfully.`);
+
+  console.log(`User ${data.name} (${socket.id}) added successfully.`);
+  console.log('Current participants:', participants);
 }
 
 io.on('connection', (socket) => {
-  console.log('new client connected:', socket.id);
+  console.log('New client connected:', socket.id);
 
+  // Handle new participant
   socket.on('new-participant', (data) => {
-    const isFirstUser = Object.keys(participants).length === 0;
-    addUser(socket, data, isFirstUser);
-
-    console.log(`client: participant ${data.name} (${socket.id}) has joined.`);
-
+    addUser(socket, data);
+    console.log(`Participant ${data.name} (${data.id}) has joined.`);
+    // Broadcast to all other clients
+    socket.broadcast.emit('get-participants', Object.values(participants));
+    // Send the updated participants list to the newly connected client
     socket.emit('existing-participants', Object.values(participants));
-    console.log(`sent existing participants to ${data.name} (${socket.id})`);
-
-    socket.broadcast.emit('participant-joined', participants[socket.id]);
-    console.log(`broadcasted new participant ${data.name} (${socket.id}) to others.`);
   });
 
-  socket.on('disconnect', () => {
-    console.log('client: user with socket id ' + socket.id + 'disconnected');
-
-    const deletedParticipant =  participants[socket.id];
-    delete participants[socket.id];
-
-    socket.broadcast.emit('participant-left', deletedParticipant);
-  });
-
+  // Handle stream updates
   socket.on('stream', (data) => {
-    console.log('client: sent stream data to broadcast:', data);
+    console.log('socket id '+ socket.id);
+    console.log(`Received stream from socket ${socket.id}`);
+    console.log(data.id + ' user id')
+    if (participants[data.id]) {
+      participants[data.id].stream = data.stream;
 
-    if (data && data.userId && data.stream) {
-      if (participants[data.userId]) {
-        participants[data.userId].stream = data.stream;
-        socket.broadcast.emit('stream', data);
-        console.log(`New stream from participant: ${data.userId}`);
-      } else {
-        console.log('Participant not found:', data.userId);
-      }
+      // Broadcast updated stream to all other clients
+      io.emit('stream', { id: participants[data.id].id, stream: data.stream });
+      console.log(`New stream from participant: ${participants[data.id].id}`);
     } else {
-      console.log('Invalid stream data:', data);
+      console.log('Participant not found.');
     }
   });
 
+  // Handle participant updates (e.g., video/audio toggles)
+  socket.on('update-participant', (data) => {
+    if (participants[data.id]) {
+      participants[data.id] = { ...participants[data.id], ...data };
+      socket.broadcast.emit('update-participant', participants[data.id]);
+      console.log(`Updated participant ${data.name} (${socket.id})`);
+    }
+  });
+
+  // Handle disconnection
+  socket.on('disconnect', (data) => {
+    console.log('Client disconnected:', data.id);
+    delete participants[data.id];
+    socket.broadcast.emit('get-participants', Object.values(participants));
+  });
+
+  // Initial request for participants
   socket.on('get-participants', () => {
     console.log('Client requested participants');
     socket.emit('existing-participants', Object.values(participants));
     console.log('Sent participants:', Object.values(participants));
-  });
-
-  socket.on('request-streams', () => {
-    console.log('client: requesting all streams');
-    for (const [id, participant] of Object.entries(participants)) {
-      if (participant.videoStream) {
-        socket.emit('stream', { userId: id, stream: participant.videoStream });
-      }
-    }
   });
 });
 
