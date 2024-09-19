@@ -21,8 +21,9 @@ app.use(cors({
 
 app.use(express.static('public'));
 
-const participants = {};
+let participants = {};
 
+// Hinzufügen eines Benutzers
 function addUser(socket, data) {
   if (!data || !data.id || !data.name) {
     console.error('Invalid data received:', data);
@@ -32,11 +33,10 @@ function addUser(socket, data) {
   participants[data.id] = {
     id: data.id,
     name: data.name,
-    stream: data.stream || null,
     videoEnabled: data.videoEnabled || false,
     audioEnabled: data.audioEnabled || false,
     recognized: data.recognized || false,
-    muted: data.muted || true
+    muted: data.muted || true,
   };
 
   console.log(`User ${data.name} (${socket.id}) added successfully.`);
@@ -46,33 +46,40 @@ function addUser(socket, data) {
 io.on('connection', (socket) => {
   console.log('New client connected:', socket.id);
 
-  // Handle new participant
   socket.on('new-participant', (data) => {
     addUser(socket, data);
     console.log(`Participant ${data.name} (${data.id}) has joined.`);
-    // Broadcast to all other clients
+
     socket.broadcast.emit('get-participants', Object.values(participants));
-    // Send the updated participants list to the newly connected client
+
     socket.emit('existing-participants', Object.values(participants));
   });
 
-  // Handle stream updates
-  socket.on('stream', (data) => {
-    console.log('socket id '+ socket.id);
-    console.log(`Received stream from socket ${socket.id}`);
-    console.log(data.id + ' user id')
-    if (participants[data.id]) {
-      participants[data.id].stream = data.stream;
-
-      // Broadcast updated stream to all other clients
-      io.emit('stream', { id: participants[data.id].id, stream: data.stream });
-      console.log(`New stream from participant: ${participants[data.id].id}`);
-    } else {
-      console.log('Participant not found.');
-    }
+  socket.on('sdp-offer', (offer) => {
+    console.log(`Received SDP offer from ${offer.from}`);
+    socket.to(offer.to).emit('sdp-offer', offer);
   });
 
-  // Handle participant updates (e.g., video/audio toggles)
+  socket.on('sdp-answer', (answer) => {
+    console.log(`Received SDP answer from ${answer.from}`);
+    socket.to(answer.to).emit('sdp-answer', answer);
+  });
+
+  socket.on('user-recognized', ({ id, recognized }) => {
+    console.log(`User recognized: ${id}, Status: ${recognized}`);
+    participants[id] = recognized;
+
+    // Informiere alle Leiter über den Erkennungsstatus
+    io.to('leaders').emit('recognition-update', { id, recognized });
+  });
+
+  // WebRTC: ICE-Kandidaten austauschen
+  socket.on('ice-candidate', (candidate) => {
+    console.log(`Received ICE candidate from ${candidate.from}`);
+    socket.to(candidate.to).emit('ice-candidate', candidate);
+  });
+
+  // Teilnehmer-Updates (z.B. Video-/Audio-Toggles)
   socket.on('update-participant', (data) => {
     if (participants[data.id]) {
       participants[data.id] = { ...participants[data.id], ...data };
@@ -81,18 +88,39 @@ io.on('connection', (socket) => {
     }
   });
 
-  // Handle disconnection
-  socket.on('disconnect', (data) => {
-    console.log('Client disconnected:', data.id);
-    delete participants[data.id];
+  socket.on('participant-left', (data) => {
+    console.log('Participant left:', data.id);
+    participants = participants.filter(p => p.id !== data.id);
+    io.emit('existing-participants', participants); // Aktualisiere die Teilnehmerliste
+  });
+
+  socket.on('update-video-status', (data) => {
+    console.log('Video status updated:', data);
+    // Sende das Video-Status-Update an alle Teilnehmer (außer den Sender)
+    socket.broadcast.emit('update-video-status', data);
+  });
+
+  socket.on('update-mic-status', (data) => {
+    console.log('Updating microphone status:', data);
+    io.emit('update-mic-status', data); // Informiere alle Clients über das Update
+  });
+
+  // Teilnehmer verlassen die Sitzung
+  socket.on('disconnect', () => {
+    console.log('Client disconnected:', socket.id);
+    for (let id in participants) {
+      if (participants[id].socketId === socket.id) {
+        delete participants[id];
+        break;
+      }
+    }
     socket.broadcast.emit('get-participants', Object.values(participants));
   });
 
-  // Initial request for participants
+  // Anfrage nach Teilnehmerliste
   socket.on('get-participants', () => {
     console.log('Client requested participants');
     socket.emit('existing-participants', Object.values(participants));
-    console.log('Sent participants:', Object.values(participants));
   });
 });
 

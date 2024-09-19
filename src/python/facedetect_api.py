@@ -2,14 +2,12 @@ import os
 import time
 
 import cv2
-from pathlib import Path
 from flask import Flask, jsonify
 from flask_cors import CORS
 import face_recognition
-from PIL import Image, ImageDraw
 
 app = Flask(__name__)
-CORS(app)  # Enable CORS if needed
+CORS(app, resources={r"/*": {"origins": "*"}})
 current_dir = os.path.dirname(os.path.abspath(__file__))
 parent_dir = os.path.dirname(current_dir)
 photos_dir = os.path.join(parent_dir, 'app/lib/photos')
@@ -34,31 +32,31 @@ def capture(user_id):
     time.sleep(2)
 
     if img is None:
-        print("Kein Bild vorhanden, nehme Bild auf...")
+        print("no image exists, capturing...")
 
         if not camera.isOpened():
-            return jsonify({"error": "Kamera konnte nicht geöffnet werden."}), 500
+            return jsonify({"error": "camera could not be opened"}), 500
 
         ret, frame = camera.read()
         if not ret:
-            return jsonify({"error": "Fehler beim Lesen des Frames."}), 500
+            return jsonify({"error": "error while reading frame"}), 500
 
         frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
         face_locations = face_recognition.face_locations(frame_rgb, model="cnn")
         print(len(face_locations))
 
         if len(face_locations) > 1:
-            return jsonify({"error": "Mehrere Personen in der Kamera-Aufzeichnung."}), 400
+            return jsonify({"error": "multiple persons in picture"}), 400
 
         cv2.imwrite(img_path, frame)
-        print(f"Bild gespeichert unter {img_path}")
+        print(f"image saved under {img_path}")
 
         camera.release()
 
-        json_string = { "message": "Bild wurde aufgenommen und gespeichert.", "img_path": img_path }
+        json_string = { "message": "image read and saved", "img_path": img_path }
         return jsonify(json_string)
     else:
-        return jsonify({"message": "Bild bereits vorhanden."})
+        return jsonify({"message": "image already exists"})
 
 
 """
@@ -80,15 +78,15 @@ def detect(user_id):
     control_image = cv2.imread(img_path)
 
     if control_image is None:
-        return jsonify({"error": "Kontrollbild nicht gefunden."}), 404
+        return jsonify({"error": "control image not found"}), 404
 
     camera = cv2.VideoCapture(0)
     if not camera.isOpened():
-        return jsonify({"error": "Kamera konnte nicht geöffnet werden."}), 500
+        return jsonify({"error": "camera not found"}), 500
 
     ret, frame = camera.read()
     if not ret:
-        return jsonify({"error": "Fehler beim Lesen des Kamera-Frames."}), 500
+        return jsonify({"error": "error while reading camera frame"}), 500
 
     frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
     control_rgb = cv2.cvtColor(control_image, cv2.COLOR_BGR2RGB)
@@ -106,11 +104,11 @@ def detect(user_id):
     cv2.destroyAllWindows()
 
     if recognized:
-        print("Gesichter sind identisch")
-        return jsonify({"message": "Gesichter sind identisch", "recognized": True}), 200
+        print("faces identical")
+        return jsonify({"message": "faces not identical", "recognized": True}), 200
     else:
-        print("Gesichter sind nicht identisch")
-        return jsonify({"message": "Gesichter sind nicht indentisch.", "recognized": False}), 200
+        print("faces not identical")
+        return jsonify({"message": "faces are identical", "recognized": False}), 200
 
 """
     Checks if an image file exists for a given user.
@@ -125,14 +123,29 @@ def detect(user_id):
 """
 @app.route('/check/<user_id>', methods=['GET'])
 def check_image(user_id):
+  try:
+    print("Checking image for user:", user_id)
+
     img_name = f"{user_id}.png"
     img_path = os.path.join(photos_dir, img_name)
 
     if os.path.isfile(img_path):
-        return jsonify({"message": "Bild existiert.", "exists": True}), 200
+      return jsonify({"message": "Image exists", "exists": True}), 200
     else:
-        return jsonify({"message": "Bild existiert nicht.", "exists": False}), 404
+      return jsonify({"message": "Image does not exist", "exists": False}), 404
 
+  except Exception as e:
+    print("Error while checking image:", str(e))
+    return jsonify({"message": "Internal Server Error", "error": str(e)}), 500
+
+
+@app.route('/test', methods=['GET'])
+def test_route():
+  return jsonify({"message": "Test successful"}), 200
+
+@app.errorhandler(403)
+def forbidden_error(error):
+  return jsonify({"error": "Forbidden", "message": str(error)}), 403
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True, port= 5200)

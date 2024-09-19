@@ -1,35 +1,47 @@
 <div class="app-container">
-  <div class="meeting-container">
-    <mat-toolbar color="primary">
-      <span>Telepresence App</span>
-    </mat-toolbar>
+  <!-- Titel-Banner -->
+  <div class="title-bar">Telepräsenz-App</div>
 
+  <div class="meeting-container">
     <div class="main-display">
-      <video *ngIf="localParticipant" #localVideo autoplay muted></video>
-      <div class="video-grid" *ngIf="showParticipants">
-        <video *ngFor="let participant of participants" #participantVideo autoplay></video>
+      <!-- Wrapper für alle Videos -->
+      <div class="video-wrapper">
+        <!-- Lokales Video im Wrapper -->
+        <div class="local-video-wrapper">
+          <video #localVideo autoplay muted></video>
+        </div>
+        <!-- Hier wird die Video-Gruppe angezeigt -->
+        <div class="video-grid">
+          <video *ngFor="let participant of participants" #participantVideo [attr.data-id]="participant.id"></video>
+        </div>
       </div>
 
+      <!-- Steuerungsbereich -->
       <div class="controls-container">
-        <button mat-raised-button (click)="toggleVideo()">
-          <img [src]="'./assets/video.svg'" alt="Toggle Video" />
+        <button (click)="toggleVideo()">
+          <img src="assets/video.svg" alt="Toggle Video">
         </button>
-        <button mat-raised-button (click)="toggleMic()">
-          <img [src]="'./assets/muted.svg'" alt="Toggle Mic" />
+        <button (click)="toggleMic()">
+          <img src="assets/muted.svg" alt="Toggle Mic">
         </button>
-        <button mat-raised-button (click)="toggleParticipants()">
-          <img [src]="'./assets/user.svg'" alt="Toggle Participants" />
+        <button (click)="toggleParticipantList()">
+          <img src="assets/user.svg" alt="Participants">
         </button>
       </div>
     </div>
 
+    <!-- Teilnehmerliste -->
     <div class="participants-list" *ngIf="showParticipants">
-      <mat-list>
-        <mat-list-item *ngFor="let participant of participants">
-          <mat-icon>person</mat-icon>
-          {{ participant.name }}
-        </mat-list-item>
-      </mat-list>
+      <div class="participants-banner">Teilnehmerliste</div>
+      <div class="participant-wrapper" *ngFor="let participant of participants">
+        <div class="participant-name">{{ participant.name }}</div>
+        <div class="participant-status">
+          <div class="status-icons">
+            <img class="status-icon" src="assets/video.svg" *ngIf="participant.videoEnabled" alt="Video Enabled">
+            <img class="status-icon" src="assets/lightbulb.svg" *ngIf="!participant.recognized" alt="User recognized">
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </div>

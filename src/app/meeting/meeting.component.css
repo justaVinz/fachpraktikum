@@ -1,69 +1,139 @@
+/* Container für die gesamte App */
 .app-container {
   display: flex;
+  flex-direction: column; /* Vertikale Anordnung der Elemente */
   height: 100vh;
-  flex-direction: row;
 }
 
+/* Titel-Leiste */
+.title-bar {
+  background-color: #003d80; /* Dunklere Hintergrundfarbe für die Titel-Leiste */
+  color: #ffffff; /* Textfarbe */
+  padding: 10px 20px; /* Innenabstand */
+  text-align: center; /* Zentriert den Text */
+  font-size: 24px; /* Schriftgröße */
+  font-weight: bold; /* Schriftgewicht */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Schatten für Tiefe */
+}
+
+/* Hauptcontainer für das Meeting */
 .meeting-container {
   display: flex;
-  flex-direction: column;
+  flex-direction: row; /* Horizontale Anordnung der Elemente */
   flex: 1;
   position: relative;
+  background-color: #f1f1f1; /* Graue Hintergrundfarbe für den Meeting-Container */
 }
 
+/* Hauptanzeige für Videos */
 .main-display {
-  flex: 1;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  flex: 1; /* Nimmt den verbleibenden Platz ein */
   position: relative;
+  padding: 10px; /* Innenabstand */
+  border: 2px solid blue; /* Rahmen um die gesamte Hauptanzeige */
 }
 
+/* Wrapper für alle Videos */
+.video-wrapper {
+  display: flex;
+  flex-direction: column; /* Vertikale Anordnung */
+  align-items: center; /* Zentriert die Videos */
+  gap: 10px; /* Abstand zwischen den Videos */
+  border: 2px solid blue; /* Blauer Rand um das lokale Video */
+}
+
+
+.local-video-wrapper {
+  width: 300px; /* Breite des Wrappers */
+  height: auto; /* Höhe proportional zur Breite */
+  border: 2px solid blue; /* Blauer Rand um das lokale Video */
+  border-radius: 8px; /* Abgerundete Ecken */
+  overflow: hidden; /* Versteckt Überlauf */
+}
+
+/* Lokales Video */
+.local-video-wrapper video {
+  width: 100%; /* Füllt den Wrapper */
+  height: 100%; /* Füllt den Wrapper */
+  object-fit: cover; /* Verhindert Verzerrung des Videos */
+}
+
+/* Video-Grid für Teilnehmer */
 .video-grid {
   display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
+  height: 300px;
+  flex-wrap: wrap; /* Ermöglicht Umbrüche bei Platzmangel */
+  justify-content: center; /* Zentriert die Videos */
+  gap: 10px; /* Abstand zwischen den Teilnehmer-Videos */
+  width: 100%; /* Breite des Video-Grids */
 }
 
+.video-grid video {
+  width: 350px; /* Breite der Teilnehmer-Videos */
+  height: 200px; /* Höhe der Teilnehmer-Videos */
+  border-radius: 8px; /* Abgerundete Ecken für Teilnehmer-Videos */
+  border: 2px solid blue; /* Blauer Rand um die Teilnehmer-Videos */
+}
+
+/* Steuerungscontainer */
 .controls-container {
   display: flex;
   justify-content: center;
-  gap: 10px;
+  gap: 20px; /* Abstand zwischen den Schaltflächen */
   padding: 10px;
-  border: 2px solid blue; /* Blauer Rand um die Steuerungskontainer */
-  background-color: #fff; /* Weißer Hintergrund für bessere Sichtbarkeit des Rands */
+  border: none; /* Keine Umrandung */
+  background-color: transparent; /* Hintergrund unsichtbar */
   position: absolute;
-  bottom: 0; /* Positioniert den Steuerungsbereich am unteren Rand der Meeting-Container */
+  bottom: 50px; /* Position höher setzen */
   width: 100%; /* Macht den Steuerungsbereich so breit wie die Meeting-Container */
   z-index: 10; /* Stellt sicher, dass die Steuerungsknöpfe über anderen Elementen liegen */
 }
 
 .controls-container button {
-  background-color: transparent;
-  border: none;
-  padding: 5px;
-  cursor: pointer;
+  background-color: #0056b3; /* Hintergrundfarbe der Schaltfläche */
+  color: #fff; /* Schriftfarbe der Schaltfläche */
+  border: none; /* Keine Umrandung */
+  border-radius: 5px; /* Abgerundete Ecken */
+  padding: 10px 15px; /* Innenabstand für die Schaltflächen */
+  cursor: pointer; /* Zeigerzeiger */
+  font-size: 16px; /* Schriftgröße */
+  transition: background-color 0.3s; /* Übergangseffekt für Hover */
+}
+
+.controls-container button:hover {
+  background-color: #004494; /* Dunklere Farbe bei Hover */
 }
 
 .controls-container img {
-  width: 24px;
-  height: 24px;
+  width: 24px; /* Breite der Icons */
+  height: 24px; /* Höhe der Icons */
 }
 
+/* Container für die Teilnehmerliste */
 .participants-list {
-  width: 250px;
-  background-color: #f1f1f1;
-  border-left: 2px solid blue;
-  padding: 10px;
+  width: 300px; /* Breitere Teilnehmerliste */
+  background-color: #f1f1f1; /* Graue Hintergrundfarbe für die Teilnehmerliste */
+  padding: 0; /* Innenabstand entfernt */
   position: absolute;
   right: 0;
-  top: 64px; /* Stelle sicher, dass es über dem Hauptinhalt liegt */
+  top: 0; /* Setze es auf 0, um bis zum Rand zu gehen */
   bottom: 0;
-  overflow-y: auto;
-  z-index: 5; /* Stellt sicher, dass die Teilnehmerliste hinter der Steuerungskontainer liegt */
+  overflow-y: auto; /* Scrollen für lange Listen ermöglichen */
+  z-index: 5; /* Über den anderen Elementen */
   box-shadow: -2px 0 5px rgba(0, 0, 0, 0.2); /* Schatten für die Teilnehmerliste */
 }
 
+/* Banner für die Teilnehmerliste */
+.participants-banner {
+  background-color: #0056b3; /* Dunklere Hintergrundfarbe des Banners */
+  color: #ffffff; /* Textfarbe des Banners */
+  padding: 10px; /* Innenabstand */
+  text-align: center; /* Text zentrieren */
+  font-size: 20px; /* Größere Schriftgröße für das Banner */
+  font-weight: bold; /* Schriftgewicht */
+}
+
+/* Stil für jeden Teilnehmer */
 .participant-wrapper {
   display: flex;
   justify-content: space-between;
@@ -74,12 +144,13 @@
 
 .participant-name {
   font-weight: bold;
-  font-size: 16px;
+  font-size: 18px; /* Größere Schriftgröße für die Namen */
+  color: black; /* Textfarbe für Teilnehmernamen */
 }
 
 .participant-status {
-  color: #888;
-  font-size: 14px;
+  color: #888; /* Farbe für den Status */
+  font-size: 14px; /* Schriftgröße für den Status */
 }
 
 .status-icons {
@@ -89,5 +160,5 @@
 .status-icon {
   width: 24px;
   height: 24px;
-  margin-left: 5px;
+  margin-left: 5px; /* Abstand zwischen den Icons */
 }

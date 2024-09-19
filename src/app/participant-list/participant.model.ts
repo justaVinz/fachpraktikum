@@ -1,4 +1,5 @@
 export interface Participant {
+  isLeader: boolean;
   id: string;
   name: string;
   stream: MediaStream | null;
@@ -6,5 +7,4 @@ export interface Participant {
   audioEnabled: boolean;
   muted: boolean;
   recognized: boolean;
-  isFirstUser: boolean;
 }
