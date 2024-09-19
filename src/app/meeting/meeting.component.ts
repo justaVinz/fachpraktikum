@@ -104,7 +104,7 @@ export class MeetingComponent implements OnInit, AfterViewInit {
       this.participants.forEach(participant => {
         if (participant.id !== this.userId && participant.stream) {
           console.log(`Creating peer connection for participant ${participant.id}`);
-          this.createPeerConnection(participant.id, participant.stream);
+          this.createPeerConnection(participant.id);
         }
       });
 
