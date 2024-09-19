@@ -1,0 +1,10 @@
+<mat-list>
+  <mat-list-item *ngFor="let participant of participants">
+    <div class="participant-info">
+      <span class="participant-name">{{ participant.name }}</span>
+      <span class="participant-status">{{ getParticipantStatus(participant) }}</span>
+    </div>
+    <mat-icon>{{ participant.videoEnabled ? 'videocam' : 'videocam_off' }}</mat-icon>
+    <mat-icon>{{ participant.audioEnabled ? 'mic' : 'mic_off' }}</mat-icon>
+  </mat-list-item>
+</mat-list>

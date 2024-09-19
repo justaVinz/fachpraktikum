@@ -1,0 +1,26 @@
+<div class="meeting-container">
+  <mat-toolbar color="primary">
+    <span>Meeting</span>
+    <button mat-button (click)="toogleParticipants()">
+      {{ showParticipants ? 'Hide Participants' : 'Show Participants' }}
+    </button>
+  </mat-toolbar>
+
+  <div class="video-container" *ngIf="showParticipants">
+    <div class="video-grid">
+      <video *ngFor="let participant of participants" #participantVideo autoplay></video>
+    </div>
+  </div>
+
+  <div class="controls-container">
+    <button mat-raised-button (click)="toggleVideo()">
+      {{ (Array.from(participants).find(p => p.id === userId)?.videoEnabled ? 'Disable' : 'Enable') }} Video
+    </button>
+    <button mat-raised-button (click)="toogleMic()">
+      {{ (Array.from(participants).find(p => p.id === userId)?.audioEnabled ? 'Mute' : 'Unmute') }} Mic
+    </button>
+  </div>
+
+  <canvas #canvas></canvas>
+  <img #capturedImage>
+</div>
