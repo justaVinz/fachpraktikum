@@ -25,3 +25,16 @@ Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To u
 ## Further help
 
 To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+
+# Practical
+
+# How to run the App
+open the project in you IDE and start all servers (facedectection_api, server.js and the application iteself).
+
+make sure you're IDE is able to run the Angular Application.
+
+Connect to localhost:4200 and set a name for you user. click on join meeting and you'll join the meeting.
+Currently you can't simulate a meeting with more users, at least the cameras won't generate input. Still to do...
+
+You can simulate the face detection and validation by your camera itself. You will find a lightbulb in participant list.
+When you stay in the picture of the camera it will dissapear. That's the validation of your face!
