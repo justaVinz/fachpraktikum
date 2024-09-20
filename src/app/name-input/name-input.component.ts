@@ -20,6 +20,16 @@ export class NameInputComponent implements OnInit {
   constructor(private router: Router) {
   }
 
+  /**
+   * Initializes the component by establishing a connection to the server using a socket.
+   *
+   * @remarks
+   * This function sets up the socket connection to the server at 'http://localhost:3000'.
+   * It also listens for the 'connect' event, which is triggered when the socket successfully connects to the server.
+   * Upon connection, it logs the socket ID to the console.
+   *
+   * @returns {void} - This function does not return any value.
+   */
   ngOnInit(): void {
     this.socket = io('http://localhost:3000');
 
@@ -28,6 +38,18 @@ export class NameInputComponent implements OnInit {
     });
   }
 
+  /**
+   * Retrieves and sets the user's video and audio streams.
+   *
+   * This function uses the `navigator.mediaDevices.getUserMedia` method to request access to the user's camera and microphone.
+   * If the request is successful, it assigns the obtained stream to the `stream` property and sets the `srcObject` of the
+   * `userVideo` element to display the user's video.
+   *
+   * If an error occurs during the retrieval of the user's media devices, it logs the error to the console and displays an alert
+   * asking the user to allow camera access.
+   *
+   * @returns {Promise<void>} - A promise that resolves when the user's video and audio streams are successfully retrieved and set.
+   */
   async getUserVideoStream(): Promise<void> {
     try {
       this.stream = await navigator.mediaDevices.getUserMedia({video: true, audio: true});

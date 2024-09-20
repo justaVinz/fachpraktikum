@@ -4,19 +4,15 @@
 
   <div class="meeting-container">
     <div class="main-display">
-      <!-- Wrapper für alle Videos -->
       <div class="video-wrapper">
-        <!-- Lokales Video im Wrapper -->
         <div class="local-video-wrapper">
           <video #localVideo autoplay muted></video>
         </div>
-        <!-- Hier wird die Video-Gruppe angezeigt -->
         <div class="video-grid">
           <video *ngFor="let participant of participants" #participantVideo [attr.data-id]="participant.id"></video>
         </div>
       </div>
 
-      <!-- Steuerungsbereich -->
       <div class="controls-container">
         <button (click)="toggleVideo()">
           <img src="assets/video.svg" alt="Toggle Video">
@@ -30,7 +26,6 @@
       </div>
     </div>
 
-    <!-- Teilnehmerliste -->
     <div class="participants-list" *ngIf="showParticipants">
       <div class="participants-banner">Teilnehmerliste</div>
       <div class="participant-wrapper" *ngFor="let participant of participants">

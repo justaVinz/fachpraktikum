@@ -10,9 +10,9 @@ mat-card-header {
 
 .participant-wrapper {
   display: flex;
-  justify-content: space-between; /* Verteilt den Platz gleichmäßig */
-  align-items: center; /* Zentriert die Icons vertikal */
-  padding: 10px; /* Abstand innerhalb des Wrappers */
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
 }
 
 .participant-info {
@@ -31,11 +31,11 @@ mat-card-header {
 }
 
 .status-icons {
-  display: flex; /* Macht die Icons horizontal */
+  display: flex;
 }
 
 .status-icon {
   width: 24px;
   height: 24px;
-  margin-left: 5px; /* Abstand zwischen den Icons */
+  margin-left: 5px;
 }

@@ -23,6 +23,18 @@ import {NgForOf, NgIf} from "@angular/common";
 export class ParticipantListComponent {
   @Input() participants: Participant[] = []; // Liste der Teilnehmer
 
+  /**
+   * Returns the status of a participant based on their muted state.
+   *
+   * @param participant - The participant whose status needs to be determined.
+   * @returns A string indicating whether the participant is muted or unmuted.
+   *
+   * @example
+   * ```typescript
+   * const participant: Participant = { name: 'John Doe', muted: true };
+   * console.log(getParticipantStatus(participant)); // Output: 'Muted'
+   * ```
+   */
   getParticipantStatus(participant: Participant): string {
     return participant.muted ? 'Muted' : 'Unmuted';
   }

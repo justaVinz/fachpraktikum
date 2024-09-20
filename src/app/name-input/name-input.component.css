@@ -4,62 +4,62 @@
   align-items: center;
   height: 100vh;
   background: url('/assets/waiting.jpg') no-repeat center center fixed;
-  background-size: cover; /* Deckt den gesamten Container ab */
+  background-size: cover;
 }
 
 mat-card {
   max-width: 400px;
   width: 100%;
   padding: 20px;
-  border-radius: 12px; /* Abgerundete Ecken für die Karte */
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Sanfte Schatten für die Karte */
-  background-color: #ffffff; /* Weißer Hintergrund für die Karte */
+  border-radius: 12px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  background-color: #ffffff;
   display: flex;
   flex-direction: column;
-  align-items: center; /* Zentriert den Inhalt */
+  align-items: center;
 }
 
 mat-form-field {
   width: 100%;
-  margin-bottom: 5px; /* Abstand zwischen den Formularfeldern */
+  margin-bottom: 5px;
 }
 
 mat-form-field .mat-form-field-flex {
-  border-radius: 8px; /* Abgerundete Ecken für das Eingabefeld */
-  background-color: #f1f1f1; /* Leicht grauer Hintergrund für das Eingabefeld */
+  border-radius: 8px;
+  background-color: #f1f1f1;
 }
 
 mat-form-field .mat-form-field-infix {
-  padding: 8px 12px; /* Innenabstand für das Eingabefeld */
+  padding: 8px 12px;
 }
 
 mat-form-field .mat-form-field-label {
-  color: #007bff; /* Blau für das Label */
+  color: #007bff;
 }
 
 .button-container {
   display: flex;
-  justify-content: center; /* Horizontale Zentrierung */
-  align-items: center; /* Vertikale Zentrierung (optional) */
+  justify-content: center;
+  align-items: center;
 }
 
 button {
-  background-color: #007bff; /* Blaue Hintergrundfarbe für den Button */
-  color: #ffffff; /* Weiße Schriftfarbe */
+  background-color: #007bff;
+  color: #ffffff;
   border: none;
-  border-radius: 8px; /* Abgerundete Ecken für den Button */
-  padding: 10px 20px; /* Innenabstand für den Button */
+  border-radius: 8px;
+  padding: 10px 20px;
   font-size: 16px;
   cursor: pointer;
-  transition: background-color 0.3s, box-shadow 0.3s; /* Sanfte Übergänge für Hover-Effekte */
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Sanfte Schatten für den Button */
+  transition: background-color 0.3s, box-shadow 0.3s;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 button:hover {
-  background-color: #0056b3; /* Dunkleres Blau beim Hover */
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2); /* Stärkerer Schatten beim Hover */
+  background-color: #0056b3;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
 }
 
 button:active {
-  background-color: #004494; /* Noch dunkleres Blau beim Klicken */
+  background-color: #004494;
 }

@@ -23,7 +23,6 @@ app.use(express.static('public'));
 
 let participants = {};
 
-// Hinzufügen eines Benutzers
 function addUser(socket, data) {
   if (!data || !data.id || !data.name) {
     console.error('Invalid data received:', data);
@@ -69,17 +68,14 @@ io.on('connection', (socket) => {
     console.log(`User recognized: ${id}, Status: ${recognized}`);
     participants[id] = recognized;
 
-    // Informiere alle Leiter über den Erkennungsstatus
     io.to('leaders').emit('recognition-update', { id, recognized });
   });
 
-  // WebRTC: ICE-Kandidaten austauschen
   socket.on('ice-candidate', (candidate) => {
     console.log(`Received ICE candidate from ${candidate.from}`);
     socket.to(candidate.to).emit('ice-candidate', candidate);
   });
 
-  // Teilnehmer-Updates (z.B. Video-/Audio-Toggles)
   socket.on('update-participant', (data) => {
     if (participants[data.id]) {
       participants[data.id] = { ...participants[data.id], ...data };
@@ -91,21 +87,19 @@ io.on('connection', (socket) => {
   socket.on('participant-left', (data) => {
     console.log('Participant left:', data.id);
     participants = participants.filter(p => p.id !== data.id);
-    io.emit('existing-participants', participants); // Aktualisiere die Teilnehmerliste
+    io.emit('existing-participants', participants);
   });
 
   socket.on('update-video-status', (data) => {
     console.log('Video status updated:', data);
-    // Sende das Video-Status-Update an alle Teilnehmer (außer den Sender)
     socket.broadcast.emit('update-video-status', data);
   });
 
   socket.on('update-mic-status', (data) => {
     console.log('Updating microphone status:', data);
-    io.emit('update-mic-status', data); // Informiere alle Clients über das Update
+    io.emit('update-mic-status', data);
   });
 
-  // Teilnehmer verlassen die Sitzung
   socket.on('disconnect', () => {
     console.log('Client disconnected:', socket.id);
     for (let id in participants) {
@@ -117,7 +111,6 @@ io.on('connection', (socket) => {
     socket.broadcast.emit('get-participants', Object.values(participants));
   });
 
-  // Anfrage nach Teilnehmerliste
   socket.on('get-participants', () => {
     console.log('Client requested participants');
     socket.emit('existing-participants', Object.values(participants));
