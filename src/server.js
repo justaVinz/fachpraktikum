@@ -36,6 +36,7 @@ function addUser(socket, data) {
     audioEnabled: data.audioEnabled || false,
     recognized: data.recognized || false,
     muted: data.muted || true,
+    socketId: socket.id // Store the socket ID for disconnect tracking
   };
 
   console.log(`User ${data.name} (${socket.id}) added successfully.`);
@@ -50,25 +51,28 @@ io.on('connection', (socket) => {
     console.log(`Participant ${data.name} (${data.id}) has joined.`);
 
     socket.broadcast.emit('get-participants', Object.values(participants));
-
-    socket.emit('existing-participants', Object.values(participants));
+    socket.emit('get-participants', Object.values(participants));
   });
 
-  socket.on('sdp-offer', (offer) => {
+  socket.on('offer', (offer) => {
     console.log(`Received SDP offer from ${offer.from}`);
-    socket.to(offer.to).emit('sdp-offer', offer);
+    socket.to(offer.to).emit('offer', offer);
+    console.log(`Sent SDP offer to ${offer.to}`);
+
   });
 
-  socket.on('sdp-answer', (answer) => {
+  socket.on('answer', (answer) => {
     console.log(`Received SDP answer from ${answer.from}`);
-    socket.to(answer.to).emit('sdp-answer', answer);
+    socket.to(answer.to).emit('answer', answer);
+    console.log(`Sent SDP answer to ${offer.to}`);
   });
 
   socket.on('user-recognized', ({ id, recognized }) => {
     console.log(`User recognized: ${id}, Status: ${recognized}`);
-    participants[id] = recognized;
-
-    io.to('leaders').emit('recognition-update', { id, recognized });
+    if (participants[id]) {
+      participants[id].recognized = recognized;
+      socket.broadcast.emit('recognition-update', { id, recognized });
+    }
   });
 
   socket.on('ice-candidate', (candidate) => {
@@ -86,8 +90,8 @@ io.on('connection', (socket) => {
 
   socket.on('participant-left', (data) => {
     console.log('Participant left:', data.id);
-    participants = participants.filter(p => p.id !== data.id);
-    io.emit('existing-participants', participants);
+    delete participants[data.id]; // Fix the removal logic
+    io.emit('existing-participants', Object.values(participants)); // Emit updated participants list
   });
 
   socket.on('update-video-status', (data) => {
