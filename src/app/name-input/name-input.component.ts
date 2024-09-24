@@ -1,6 +1,6 @@
 import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {Router} from '@angular/router';
-import {Participant} from '../participant-list/participant.model';
+import {Participant} from '../participant/participant.model';
 import {v4 as uuid} from 'uuid';
 import {io, Socket} from 'socket.io-client';
 

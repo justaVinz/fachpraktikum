@@ -15,7 +15,6 @@ import {MeetingComponent} from "./meeting/meeting.component";
 import {NameInputComponent} from "./name-input/name-input.component";
 import { FaceRecognitionService } from './services/face.recognition.service';
 import {AppRoutingModule} from "./app-routing.module";
-import { ParticipantListComponent } from './participant-list/participant-list.component';
 import {MatCard, MatCardActions, MatCardContent, MatCardHeader, MatCardTitle} from "@angular/material/card";
 import { HttpClientModule } from '@angular/common/http';
 
@@ -37,7 +36,6 @@ const routes: Routes = [
     SocketIoModule,
     HttpClientModule,
     BrowserModule,
-    ParticipantListComponent,
     AppRoutingModule,
     BrowserAnimationsModule,
     MatToolbarModule,

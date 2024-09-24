@@ -32,7 +32,7 @@
         <div class="participant-name">{{ participant.name }}</div>
         <div class="participant-status">
           <div class="status-icons">
-            <img class="status-icon" src="assets/muted.svg" *ngIf="participant.audioEnabled" alt="Audio Enabled">
+            <img class="status-icon" src="assets/muted.svg" *ngIf="!participant.audioEnabled" alt="Audio Enabled">
             <img class="status-icon" src="assets/lightbulb.svg" *ngIf="!participant.recognized" alt="User recognized">
           </div>
         </div>

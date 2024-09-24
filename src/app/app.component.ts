@@ -6,7 +6,4 @@ import { Component } from '@angular/core';
   templateUrl: './app.component.html',
 })
 
-export class AppComponent {
-  videoEnabled = true;
-  audioEnabled = true;
-}
+export class AppComponent {}
